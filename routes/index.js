@@ -135,4 +135,112 @@ router.get('/', function(req, res, next) {
         });
 });
 
+let memberStore = [];
+
+router.get('/list/:campaignId/:tierID', (req,res) => {
+    const {campaignId, tierID} = req.params;
+
+    if(!user){ // redirect if user not logged in
+        res.redirect('/login');
+        return;
+    }
+
+/*    apiCall(`campaigns/${campaignId}/members`, {
+        "include": "address,currently_entitled_tiers,user",
+        "fields[user]":"full_name"
+    })
+        .then(members => {
+            const membersArray = members.data;
+            const includes = members.included;
+            console.log(JSON.stringify(members, null, '\t')); // for debug purposes
+
+
+
+
+            res.render('list', );
+        })
+        .catch(err => {
+            console.log(err);
+            res.render('error', {error: err});
+        });*/
+    const memberEndpoint = new URL(`https://www.patreon.com/api/oauth2/v2/campaigns/${campaignId}/members`);
+    const searchParams = new URLSearchParams({
+        "include": "address,currently_entitled_tiers,user",
+        "fields[user]":"full_name",
+        "fields[address]":"country,state,city,postal_code,line_1,line_2",
+    });
+    memberEndpoint.search = searchParams.toString();
+
+    memberStore = []; // clear out the member store before each new request
+    getMembersPage(memberEndpoint.toString())
+        .then(() => {
+            // memberStore should be populated with all the members now
+
+            const membersArray = memberStore.filter(m =>
+                m.tiers.includes(tierID)
+            ); // filter all members who do not meet the tier requirements
+
+            res.render('list', {members: membersArray});
+        })
+        .catch(err => {
+            console.log(err);
+            res.render('error', {error: err});
+        });
+})
+
+function memberAPICall(endpoint){
+    const apiURL = new URL(endpoint);
+    console.log(apiURL.toString());
+    return fetch(apiURL, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${user.token}`
+        }
+    }).then((res) => {
+        if(res.ok){
+            return res.json();
+        }else{
+            return Promise.reject(new Error(res.statusText));
+        }
+    });
+}
+
+function getMembersPage(endpoint){
+        return memberAPICall(endpoint)
+            .then(members => {
+                const membersArray = members.data;
+                const includes = members.included;
+                console.log(JSON.stringify(members, null, '\t')); // for debug purposes
+
+
+                membersArray.forEach(member =>{
+                    const userID = member.relationships.user.data.id;
+                    const memberObject = {
+                        id: userID,
+                        fullName: includes.find(include => include.id === userID && include.type === "user").attributes.full_name,
+                        address: includes.find(include => include.id === member.relationships.address?.id && include.type === "address")?.attributes.address,
+                        tiers: []
+                    };
+
+                    member.relationships.currently_entitled_tiers.data.forEach(tier => {
+                        memberObject.tiers.push(tier.id);
+                    });
+
+                    memberStore.push(memberObject);
+                });
+
+
+                if(members.links?.next){
+                    return getMembersPage(members.links.next);
+                }else{
+                    console.log('No more member pages');
+                }
+
+            })
+            .catch(err => {
+                console.log(err);
+                return Promise.reject(err);
+            });
+}
+
 module.exports = router;

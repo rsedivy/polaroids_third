@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Polaroids Third</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<h1>Patreon Stuff</h1>
+<h2>Polaroid sending order</h2>
+<p>
+<ul>
+ <%
+ for (let i = 0; i < members.length; i++) {
+     %>
+     <li><%= members[i].fullName %></li>
+    <%
+ }
+ %>
+</ul>
+</p>
+</body>
+</html>
