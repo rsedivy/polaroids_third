@@ -1,7 +1,7 @@
 # Polaroids Third
 Polaroids Third - a custom patreon rewards management system for the [Safety Third podcast Patreon page](https://www.patreon.com/safetythird).
 
-This project is simple - William Osman needs [custom software to manage his nightmare Patreon tier](https://youtu.be/6SOiZSGtdGI?t=274). I need a 5 hour project because I have nothing to do on this Friday night.
+This project is simple - William Osman needs [custom software to manage his nightmare Patreon tier](https://youtu.be/6SOiZSGtdGI?t=274). I need a ~~5 hour~~ weekend project because I am bad at time planning.
 
 The podcast has a patreon tier where a member gets a signed polaroid from a podcast member every 3 months. This project creates a page that grabs all members of the patreon from the patreon API, and shows a webpage that lists out when each patron should have their polaroid sent out.
 
