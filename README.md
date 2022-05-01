@@ -8,4 +8,7 @@ The podcast has a patreon tier where a member gets a signed polaroid from a podc
 There might be more features added in the future if someone needs them.
 
 **Common sense warning**
-This project is clearly a very quickly thrown together thing, and I'm a random dude from the internets. Please read the code before doing something unwise, like plugging your Patreon API key into a random nodejs project you got off of github.
+This project is clearly a very quickly thrown together thing, and I'm a random dude from the internets. Please read the code before doing something unwise, like plugging your Patreon API key or logging in via OAuth into a random nodejs project you got off of github.
+
+### Acknowledgements
+Parts of this code were written by AI (Github Copilot). All hail our robot overlords!
