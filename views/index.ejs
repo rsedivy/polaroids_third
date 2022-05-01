@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title>Polaroids Third</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <h1><%= title %></h1>
+    <h1>Patreon Stuff</h1>
     <h2>Select the patreon tier you'll be sending polaroids to.</h2>
     <p>
       <ul>
       <%
       for (let i = 0; i < campaigns.length; i++) {
       %>
-      <li><strong>Page <%=i+1%>: <%= campaigns.name %></strong></li>
+      <li><strong>Creator Page <%=i+1%>: <%= campaigns[i].title %></strong></li>
       <ul>
         <%
           for (var j = 0; j < campaigns[i].tiers.length; j++) {
         %>
-        <li><a href="/list/<%=campaigns[i].id%>/<%=campaigns[i].tiers[j].id%>"><strong><%=campaigns[i].tiers[j].title%></strong> - <%=campaigns[i].tiers[j].cost / 100%> USD</a></li>
+        <li><a href="/list/<%=campaigns[i].id%>/<%=campaigns[i].tiers[j].id%>"><strong><%=campaigns[i].tiers[j].title%></strong> - <%=campaigns[i].tiers[j].amount / 100%> USD</a></li>
         <%
           }
         %>

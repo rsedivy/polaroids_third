@@ -89,34 +89,50 @@ router.get('/', function(req, res, next) {
     return;
   }
 
-  const identityQuery = {
-      "fields[user]":"vanity,url,full_name"
-  }
-
-  apiCall('identity', identityQuery)
-      .then(identity => {
-          //console.log(JSON.stringify(identity, null, '\t'));
-      })
+  let processedCampaigns = [];
 
     apiCall('campaigns',{
-        "include": "tiers",
+        "include": "tiers,creator",
         "fields[tier]":"title,amount_cents",
         "fields[campaign]":"summary,url",
+        "fields[user]":"full_name"
     })
         .then(campaigns => {
-            console.log(JSON.stringify(campaigns, null, '\t'));
+            const campaignsArray = campaigns.data;
+            const includes = campaigns.included;
+            //console.log(JSON.stringify(campaigns, null, '\t')); // for debug purposes
+
+            campaignsArray.forEach(campaign => {
+                let fullName = includes.find(include =>
+                        include.id === campaign.relationships.creator.data.id
+                        && include.type === "user"
+                ).attributes.full_name;
+
+                const campaignObject = {
+                    id: campaign.id,
+                    title: fullName,
+                    tiers: []
+                };
+
+                // the AI wrote this entire part on its own and I'm staggered
+                campaign.relationships.tiers.data.forEach(tier => {
+                    const tierObject = {
+                        id: tier.id,
+                        title: includes.find(include => include.id === tier.id && include.type === "tier").attributes.title,
+                        amount: includes.find(include => include.id === tier.id && include.type === "tier").attributes.amount_cents
+                    };
+                    campaignObject.tiers.push(tierObject);
+                });
+
+                processedCampaigns.push(campaignObject);
+            });
+
+            res.render('index', { campaigns: processedCampaigns});
         })
-
-    apiCall('campaigns/8603669/members',{
-        "include": "address,currently_entitled_tiers",
-        //"fields[user]":"currently_entitled_tiers",
-    })
-        .then(campaign => {
-            console.log(JSON.stringify(campaign, null, '\t'));
-        })
-
-
-  res.render('index', { title: 'Patreon Stuff' });
+        .catch(err => {
+            console.log(err);
+            res.render('error', {error: err});
+        });
 });
 
 module.exports = router;
