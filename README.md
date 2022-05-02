@@ -42,7 +42,8 @@ Also, I take no liability if your house burns down as a result of my code. The [
 ### Node.js
 
 Install [node.js 18.0.0](https://nodejs.org/en/download/current/) or higher.  
-*This version just came out so you probably don't have already*
+
+*This version just came out, so you probably don't have it downloaded even if you have node.*
 
 ### Download this project from github
 
