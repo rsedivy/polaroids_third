@@ -13,26 +13,26 @@ const redirectURI = 'http://localhost:3000/patreon/callback';
 
 let user = null;
 
-function apiCall(endpoint, query){
-        const apiURL = new URL("https://www.patreon.com/api/oauth2/v2/"+endpoint);
-        if(query != null){
-            const searchParams = new URLSearchParams(query);
-            apiURL.search = searchParams.toString();
-        }
+function apiCall(endpoint, query) {
+    const apiURL = new URL("https://www.patreon.com/api/oauth2/v2/" + endpoint);
+    if (query != null) {
+        const searchParams = new URLSearchParams(query);
+        apiURL.search = searchParams.toString();
+    }
 
-        console.log(apiURL.toString());
-        return fetch(apiURL, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${user.token}`
-            }
-        }).then((res) => {
-            if(res.ok){
-                return res.json();
-            }else{
-                return Promise.reject(new Error(res.statusText));
-            }
-        });
+    console.log(apiURL.toString());
+    return fetch(apiURL, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${user.token}`
+        }
+    }).then((res) => {
+        if (res.ok) {
+            return res.json();
+        } else {
+            return Promise.reject(new Error(res.statusText));
+        }
+    });
 }
 
 
@@ -60,8 +60,8 @@ router.get('/patreon/callback', (req, res) => {
             apiClient = patreonAPI(token);
             return apiClient('/current_user')
         })
-        .then(({ store, rawJson }) => {
-            const { id } = rawJson.data
+        .then(({store, rawJson}) => {
+            const {id} = rawJson.data
             user = {
                 id,
                 token
@@ -77,25 +77,25 @@ router.get('/patreon/callback', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  res.render('login', {title: 'Login', url: loginURL.toString()});
+    res.render('login', {title: 'Login', url: loginURL.toString()});
 });
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
 
-  // if there is no user, redirect to login
-  if (!user) {
-    res.redirect('/login');
-    return;
-  }
+    // if there is no user, redirect to login
+    if (!user) {
+        res.redirect('/login');
+        return;
+    }
 
-  let processedCampaigns = [];
+    let processedCampaigns = [];
 
-    apiCall('campaigns',{
+    apiCall('campaigns', {
         "include": "tiers,creator",
-        "fields[tier]":"title,amount_cents",
-        "fields[campaign]":"summary,url",
-        "fields[user]":"full_name"
+        "fields[tier]": "title,amount_cents",
+        "fields[campaign]": "summary,url",
+        "fields[user]": "full_name"
     })
         .then(campaigns => {
             const campaignsArray = campaigns.data;
@@ -104,8 +104,8 @@ router.get('/', function(req, res, next) {
 
             campaignsArray.forEach(campaign => {
                 let fullName = includes.find(include =>
-                        include.id === campaign.relationships.creator.data.id
-                        && include.type === "user"
+                    include.id === campaign.relationships.creator.data.id
+                    && include.type === "user"
                 ).attributes.full_name;
 
                 const campaignObject = {
@@ -127,7 +127,7 @@ router.get('/', function(req, res, next) {
                 processedCampaigns.push(campaignObject);
             });
 
-            res.render('index', { campaigns: processedCampaigns});
+            res.render('index', {campaigns: processedCampaigns});
         })
         .catch(err => {
             console.log(err);
@@ -137,10 +137,10 @@ router.get('/', function(req, res, next) {
 
 let memberStore = [];
 
-router.get('/list/:campaignId/:tierID', (req,res) => {
+router.get('/list/:campaignId/:tierID', (req, res) => {
     const {campaignId, tierID} = req.params;
 
-    if(!user){ // redirect if user not logged in
+    if (!user) { // redirect if user not logged in
         res.redirect('/login');
         return;
     }
@@ -148,8 +148,8 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
     const memberEndpoint = new URL(`https://www.patreon.com/api/oauth2/v2/campaigns/${campaignId}/members`);
     const searchParams = new URLSearchParams({
         "include": "address,currently_entitled_tiers",
-        "fields[member]":"full_name,pledge_relationship_start",
-        "fields[address]":"country,state,city,postal_code,line_1,line_2",
+        "fields[member]": "full_name,pledge_relationship_start",
+        "fields[address]": "country,state,city,postal_code,line_1,line_2",
     });
     memberEndpoint.search = searchParams.toString();
 
@@ -164,7 +164,7 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
                 m.tiers.includes(tierID)
             ); // filter all members who do not meet the tier requirements
 
-            if(TESTING){
+            if (TESTING) {
                 membersArray = testDataGenerator();
             }
 
@@ -175,9 +175,9 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
             membersArray.forEach(member => {
                 member.polaroidDates = [];
                 const memberDate = new Date(member.pledge_relationship_start);
-                while(true){
+                while (true) {
                     memberDate.setDate(memberDate.getDate() + 90);
-                    if(memberDate > maxDate){
+                    if (memberDate > maxDate) {
                         break;
                     }
                     member.polaroidDates.push(new Date(memberDate));
@@ -186,7 +186,11 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
 
             //console.log(JSON.stringify(membersArray[0].polaroidDates));
 
-            const aggregatedDates = [];
+            const aggregatedDates = [{
+                date: new Date(),
+                members: [],
+                relative: 0
+            }];
             membersArray.forEach(member => {
                 member.polaroidDates.forEach(date => {
 
@@ -196,10 +200,26 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
                         d.date.getDate() === date.getDate()
                     )
 
-                    if(existingDate === -1){
+                    if (existingDate === -1) {
+                        const today = new Date();
+                        let relative;
+                        if (date.getFullYear() === today.getFullYear() &&
+                            date.getMonth() === today.getMonth() &&
+                            date.getDate() === today.getDate()) {
+
+                            relative = 0;
+                        } else {
+                            if(date > today){
+                                relative = 1;
+                            }else{
+                                relative = -1;
+                            }
+                        }
+
                         aggregatedDates.push({
                             date: date,
-                            members: [member]
+                            members: [member],
+                            relative: relative
                         });
                     } else {
                         aggregatedDates[existingDate].members.push(member);
@@ -207,10 +227,10 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
                 })
             })
 
-            aggregatedDates.sort((a,b) => {
-                if(a.date > b.date){
+            aggregatedDates.sort((a, b) => {
+                if (a.date > b.date) {
                     return 1;
-                } else if(a.date < b.date){
+                } else if (a.date < b.date) {
                     return -1;
                 } else {
                     return 0;
@@ -227,7 +247,7 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
         });
 })
 
-function memberAPICall(endpoint){
+function memberAPICall(endpoint) {
     const apiURL = new URL(endpoint);
     console.log(apiURL.toString());
     return fetch(apiURL, {
@@ -236,52 +256,52 @@ function memberAPICall(endpoint){
             "Authorization": `Bearer ${user.token}`
         }
     }).then((res) => {
-        if(res.ok){
+        if (res.ok) {
             return res.json();
-        }else{
+        } else {
             return Promise.reject(new Error(res.statusText));
         }
     });
 }
 
-function getMembersPage(endpoint){
-        return memberAPICall(endpoint)
-            .then(members => {
-                const membersArray = members.data;
-                const includes = members.included;
-                //console.log(JSON.stringify(members, null, '\t')); // for debug purposes
+function getMembersPage(endpoint) {
+    return memberAPICall(endpoint)
+        .then(members => {
+            const membersArray = members.data;
+            const includes = members.included;
+            //console.log(JSON.stringify(members, null, '\t')); // for debug purposes
 
 
-                membersArray.forEach(member =>{
-                    const memberObject = {
-                        fullName: member.attributes.full_name,
-                        pledge_relationship_start: new Date(member.attributes.pledge_relationship_start),
-                        address: includes.find(include => include.id === member.relationships.address?.id && include.type === "address")?.attributes.address,
-                        tiers: []
-                    };
+            membersArray.forEach(member => {
+                const memberObject = {
+                    fullName: member.attributes.full_name,
+                    pledge_relationship_start: new Date(member.attributes.pledge_relationship_start),
+                    address: includes.find(include => include.id === member.relationships.address?.id && include.type === "address")?.attributes.address,
+                    tiers: []
+                };
 
-                    member.relationships.currently_entitled_tiers.data.forEach(tier => {
-                        memberObject.tiers.push(tier.id);
-                    });
-
-                    memberStore.push(memberObject);
+                member.relationships.currently_entitled_tiers.data.forEach(tier => {
+                    memberObject.tiers.push(tier.id);
                 });
 
-
-                if(members.links?.next){
-                    return getMembersPage(members.links.next);
-                }else{
-                    console.log('No more member pages');
-                }
-
-            })
-            .catch(err => {
-                console.log(err);
-                return Promise.reject(err);
+                memberStore.push(memberObject);
             });
+
+
+            if (members.links?.next) {
+                return getMembersPage(members.links.next);
+            } else {
+                console.log('No more member pages');
+            }
+
+        })
+        .catch(err => {
+            console.log(err);
+            return Promise.reject(err);
+        });
 }
 
-function testDataGenerator(){
+function testDataGenerator() {
     const membersArray = [
         {
             "fullName": "test",
