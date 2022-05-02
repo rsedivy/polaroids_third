@@ -5,7 +5,7 @@ This project is simple - William Osman needs [custom software to manage his nigh
 
 The podcast has a patreon tier where a podcast member sends out a signed polaroid every third month to a patreon. This project creates a page that grabs all members of the patreon from the patreon API, and shows a webpage that lists out when each patron should have their polaroid sent out.
 
-I've taken "3 months" to mean 180 days, because working with dates is genuinely hell.
+I've taken "3 months" to mean 90 days, because working with the day of the month is a task that belongs to Dante's 69th circle of hell.
 
 ## Possible future features
 
@@ -14,11 +14,14 @@ Note: I probably won't take suggestions unless you have more than 2.66 million s
 Here are some things I *could* add if they were needed:
 * Ability to mark if you've sent a patron a polaroid
   * So that you can see which polaroids have already been sent
+* Show the patrons you need to send polaroids to on a per-week basis rather than daily.
 * Proper login system to make this publicly hostable on the interwebs (instead of a locally hosted thing)
 * A way to mark which podcast member is supposed to send the polaroid (on a rotating basis)
 
 ## Known issues
 * You have to log in each time you run the project.
+* This code only counts continuous patreon membership.
+  * This is not a bug, it's a feature!
 * In it's current form, this is **absolutely not safe to run on a publicly accessible server**.
   * Run it locally only.
 * There's lots of bad practices in this code which I can't be bothered to fix.
@@ -36,7 +39,44 @@ Also, I take no liability if your house burns down as a result of my code. The [
 
 ## Installation
 
-*installation instructions will come here*
+### Node.js
+
+Install [node.js 18.0.0](https://nodejs.org/en/download/current/) or higher.  
+*This version just came out so you probably don't have already*
+
+### Install dependencies
+
+Run `npm ci` in your terminal of choice.
+
+### Register your patreon API key
+
+1) Go to https://www.patreon.com/portal/registration/register-clients
+2) Click "Create Client"
+3) Choose an app name, and fill out the non-required fields if you want to
+4) Ensure that the `Redirect URI` is set to `http://localhost:3000/patreon/callback` **(⚠ Important!)**
+5) Ensure that the `Client API Version` is set to `2` **(⚠ Important!)**
+
+![An example how to fill out the "Create Client" form](https://raw.githubusercontent.com/rsedivy/polaroids_third/main/public/images/patreon_config.PNG "Patreon API key form")
+
+### Copy down your credentials
+
+In the clients section, you will see a `Client ID` and `Client Secret` field. You will need them in the next step.
+
+ ![An example of how the credentials look like.](https://raw.githubusercontent.com/rsedivy/polaroids_third/main/public/images/apikeys_obscured.PNG "API key example")
+
+### Run the project
+
+Run the project with `npm start`.
+If it's your first time running the project, you will be prompted to enter the credentials from the previous step.
+
+### Done!
+
+The project should automatically open your default browser and redirect you to the app!  
+*(If not, just navigate to *`localhost:3000`* in your browser)*  
+
+You will have to log in via Patreon again, and provide permission for the app to see your patron list and addresses.
+
+Afterwards, just select the tier that you want to view (I don't know your Patreon tier ID beforehand), and you're good to go!
 
 ----
 
@@ -50,3 +90,7 @@ If this project is actually used, I can definitely take some time to make modifi
 
 ### Acknowledgements
 Parts of this code were written by AI (Github Copilot). All hail our robot overlords!
+
+---
+
+*This project is not affiliated with Polaroid™, Polaroid Corporation, or Polaroid B.V. All trademarks are the property of their respective owners.*
