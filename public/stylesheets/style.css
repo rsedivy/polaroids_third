@@ -109,8 +109,41 @@ h2 {
   background-color: lightgrey;
 }
 
-.polaroid-member {
+.date-list .polaroid-member {
+  border-bottom: gray solid 1px;
+}
+
+.date-list .polaroid-member:last-child{
+  border-bottom: none;
+}
+
+.polaroid-member-name{
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  justify-content: center;
+  border-bottom: lightgrey solid 1px;
   padding: 1em 0;
+}
+
+.active, .polaroid-member-name:hover{
+  background-color: #CDCDD5FF;
+}
+
+.polaroid-member-details{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  max-height: 0;
+}
+
+.polaroid-member-address{
+  margin: 1em 0;
+}
+.polaroid-member-info{
+  margin: 1em 0;
 }
 
 .polaroid-empty {
