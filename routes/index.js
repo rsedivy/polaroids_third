@@ -165,8 +165,8 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
         });*/
     const memberEndpoint = new URL(`https://www.patreon.com/api/oauth2/v2/campaigns/${campaignId}/members`);
     const searchParams = new URLSearchParams({
-        "include": "address,currently_entitled_tiers,user",
-        "fields[user]":"full_name",
+        "include": "address,currently_entitled_tiers",
+        "fields[member]":"full_name,pledge_relationship_start",
         "fields[address]":"country,state,city,postal_code,line_1,line_2",
     });
     memberEndpoint.search = searchParams.toString();
@@ -214,10 +214,9 @@ function getMembersPage(endpoint){
 
 
                 membersArray.forEach(member =>{
-                    const userID = member.relationships.user.data.id;
                     const memberObject = {
-                        id: userID,
-                        fullName: includes.find(include => include.id === userID && include.type === "user").attributes.full_name,
+                        fullName: member.attributes.full_name,
+                        pledge_relationship_start: new Date(member.attributes.pledge_relationship_start),
                         address: includes.find(include => include.id === member.relationships.address?.id && include.type === "address")?.attributes.address,
                         tiers: []
                     };
