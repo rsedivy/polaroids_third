@@ -44,9 +44,14 @@ Also, I take no liability if your house burns down as a result of my code. The [
 Install [node.js 18.0.0](https://nodejs.org/en/download/current/) or higher.  
 *This version just came out so you probably don't have already*
 
+### Download this project from github
+
+Either as a .zip file top left or by doing  
+`git clone https://github.com/rsedivy/polaroids_third.git`
+
 ### Install dependencies
 
-Run `npm ci` in your terminal of choice.
+Open the polaroids_third folder in your terminal of choice, and run `npm ci`.
 
 ### Register your patreon API key
 
