@@ -2,30 +2,60 @@
 <html>
 <head>
     <title>Polaroids Third</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
 </head>
 <body>
-<h1>Patreon Stuff</h1>
-<h2>Polaroid sending order</h2>
-<p>
-<ul>
- <%
- for (let i = 0; i < dates.length; i++) {
-     %>
-     <li><%= dates[i].date.toDateString() %></li>
-    <ul>
-     <%
-     for (let j = 0; j < dates[i].members.length; j++) {
-         %>
-         <li><%= dates[i].members[j].fullName %> - <%= dates[i].members[j].pledge_relationship_start.toDateString()%></li>
-         <%
-     }
-     %>
-    </ul>
-    <%
- }
- %>
-</ul>
-</p>
+<div class="title">
+    <h1>Polaroids Third</h1>
+</div>
+<div class="parent">
+    <div class="content">
+        <h2>Polaroid sending order</h2>
+
+        <%
+        for (let i = 0; i < dates.length; i++) {
+            let dateStyle;
+            switch(dates[i].relative){
+                case 0:
+                    dateStyle = 'today';
+                    break;
+                case 1:
+                    dateStyle = 'future';
+                    break;
+                case -1:
+                    dateStyle = 'previous';
+                    break;
+            }
+        %>
+            <div class="date-list">
+                <div class="date-list-title <%=dateStyle%>">
+                    <%= dates[i].date.toDateString() %><%if(dates[i].relative === 0){%> - Today<%}%>
+                </div>
+                <div class="polaroid-members">
+                    <%
+                        if(dates[i].members.length > 0){
+                    for (let j = 0; j < dates[i].members.length; j++) {
+                    %>
+
+                        <div class="polaroid-member">
+                            <%= dates[i].members[j].fullName %> - <%= dates[i].members[j].pledge_relationship_start.toDateString() %>
+                        </div>
+
+                    <%
+                    }
+                    }else{
+                    %>
+                    <div class="polaroid-empty">
+                            No members need a polaroid today.
+                    </div>
+                    <%}%>
+                </div>
+            </div>
+        <%
+        }
+        %>
+
+    </div>
+</div>
 </body>
 </html>
