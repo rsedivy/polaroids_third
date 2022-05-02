@@ -43,6 +43,7 @@ body {
   width: 100%;
 }
 
+
 .creator-page {
   border: black solid 1px;
   margin-top: 5em;
@@ -81,6 +82,40 @@ h2 {
   width: fit-content;
   text-decoration: none;
   z-index: 100;
+}
+
+.date-list{
+  border: black solid 1px;
+  display: flex;
+  flex-direction: column;
+  background-color: ghostwhite;
+  margin: 5px 0;
+}
+
+.date-list-title{
+  text-align: center;
+  border-bottom: black solid 1px;
+}
+
+.date-list-title.previous{
+  background-color: lightblue;
+}
+
+.date-list-title.today{
+  background-color: lightgreen;
+}
+
+.date-list-title.future{
+  background-color: lightgrey;
+}
+
+.polaroid-member {
+  padding: 1em 0;
+}
+
+.polaroid-empty {
+  padding: 1em 0;
+  color: gray;
 }
 
 .cat-polaroid {
