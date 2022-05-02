@@ -1,6 +1,8 @@
 # Polaroids Third
 Polaroids Third - a custom patreon rewards management system for the [Safety Third podcast Patreon page](https://www.patreon.com/safetythird).
 
+![GIF showing the project being used.](https://raw.githubusercontent.com/rsedivy/polaroids_third/main/public/images/usage.gif "Usage gif") 
+
 This project is simple - William Osman needs [custom software to manage his nightmare Patreon tier](https://youtu.be/6SOiZSGtdGI?t=274). I need a ~~5 hour~~ weekend project because I am bad at time planning.
 
 The podcast has a patreon tier where a podcast member sends out a signed polaroid every third month to a patreon. This project creates a page that grabs all members of the patreon from the patreon API, and shows a webpage that lists out when each patron should have their polaroid sent out.
@@ -22,7 +24,7 @@ Here are some things I *could* add if they were needed:
 * You have to log in each time you run the project.
 * This code only counts continuous patreon membership.
   * This is not a bug, it's a feature!
-* In it's current form, this is **absolutely not safe to run on a publicly accessible server**.
+* In its current form, this is **absolutely not safe to run on a publicly accessible server**.
   * Run it locally only.
 * There's lots of bad practices in this code which I can't be bothered to fix.
   * Then again, having a (relatively mundane) patreon reward that requires a custom software solution sounds like bad practice to me too.
