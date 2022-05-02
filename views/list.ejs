@@ -10,9 +10,18 @@
 <p>
 <ul>
  <%
- for (let i = 0; i < members.length; i++) {
+ for (let i = 0; i < dates.length; i++) {
      %>
-     <li><%= members[i].fullName %></li>
+     <li><%= dates[i].date.toDateString() %></li>
+    <ul>
+     <%
+     for (let j = 0; j < dates[i].members.length; j++) {
+         %>
+         <li><%= dates[i].members[j].fullName %> - <%= dates[i].members[j].pledge_relationship_start.toDateString()%></li>
+         <%
+     }
+     %>
+    </ul>
     <%
  }
  %>

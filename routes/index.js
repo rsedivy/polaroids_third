@@ -145,24 +145,6 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
         return;
     }
 
-/*    apiCall(`campaigns/${campaignId}/members`, {
-        "include": "address,currently_entitled_tiers,user",
-        "fields[user]":"full_name"
-    })
-        .then(members => {
-            const membersArray = members.data;
-            const includes = members.included;
-            console.log(JSON.stringify(members, null, '\t')); // for debug purposes
-
-
-
-
-            res.render('list', );
-        })
-        .catch(err => {
-            console.log(err);
-            res.render('error', {error: err});
-        });*/
     const memberEndpoint = new URL(`https://www.patreon.com/api/oauth2/v2/campaigns/${campaignId}/members`);
     const searchParams = new URLSearchParams({
         "include": "address,currently_entitled_tiers",
@@ -174,13 +156,70 @@ router.get('/list/:campaignId/:tierID', (req,res) => {
     memberStore = []; // clear out the member store before each new request
     getMembersPage(memberEndpoint.toString())
         .then(() => {
+            const TESTING = true;
+
             // memberStore should be populated with all the members now
 
-            const membersArray = memberStore.filter(m =>
+            let membersArray = memberStore.filter(m =>
                 m.tiers.includes(tierID)
             ); // filter all members who do not meet the tier requirements
 
-            res.render('list', {members: membersArray});
+            if(TESTING){
+                membersArray = testDataGenerator();
+            }
+
+            // set max date to one year from now
+            const maxDate = new Date();
+            maxDate.setFullYear(maxDate.getFullYear() + 1);
+
+            membersArray.forEach(member => {
+                member.polaroidDates = [];
+                const memberDate = new Date(member.pledge_relationship_start);
+                while(true){
+                    memberDate.setDate(memberDate.getDate() + 90);
+                    if(memberDate > maxDate){
+                        break;
+                    }
+                    member.polaroidDates.push(new Date(memberDate));
+                }
+            });
+
+            //console.log(JSON.stringify(membersArray[0].polaroidDates));
+
+            const aggregatedDates = [];
+            membersArray.forEach(member => {
+                member.polaroidDates.forEach(date => {
+
+                    let existingDate = aggregatedDates.findIndex(d =>
+                        d.date.getFullYear() === date.getFullYear() &&
+                        d.date.getMonth() === date.getMonth() &&
+                        d.date.getDate() === date.getDate()
+                    )
+
+                    if(existingDate === -1){
+                        aggregatedDates.push({
+                            date: date,
+                            members: [member]
+                        });
+                    } else {
+                        aggregatedDates[existingDate].members.push(member);
+                    }
+                })
+            })
+
+            aggregatedDates.sort((a,b) => {
+                if(a.date > b.date){
+                    return 1;
+                } else if(a.date < b.date){
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+
+            //console.log(JSON.stringify(aggregatedDates, null, '\t'));
+
+            res.render('list', {dates: aggregatedDates});
         })
         .catch(err => {
             console.log(err);
@@ -210,7 +249,7 @@ function getMembersPage(endpoint){
             .then(members => {
                 const membersArray = members.data;
                 const includes = members.included;
-                console.log(JSON.stringify(members, null, '\t')); // for debug purposes
+                //console.log(JSON.stringify(members, null, '\t')); // for debug purposes
 
 
                 membersArray.forEach(member =>{
@@ -240,6 +279,41 @@ function getMembersPage(endpoint){
                 console.log(err);
                 return Promise.reject(err);
             });
+}
+
+function testDataGenerator(){
+    const membersArray = [
+        {
+            "fullName": "test",
+            "pledge_relationship_start": new Date("2022-04-29T07:05:01.573Z"),
+            "tiers": [
+                "8581877"
+            ]
+        },
+    ];
+
+    for (let i = 0; i < 100; i++) {
+        let dateOffset;
+        // set dateOffset to a random number between 0 and 100
+        if (i === 0) {
+            dateOffset = 0;
+        } else {
+            dateOffset = Math.floor(Math.random() * 100);
+        }
+
+        const startDate = new Date("2022-01-29T07:05:01.573Z");
+        startDate.setDate(startDate.getDate() + dateOffset);
+
+        membersArray.push({
+            "fullName": `test${i}`,
+            "pledge_relationship_start": startDate,
+            "tiers": [
+                "8581877"
+            ]
+        })
+    }
+
+    return membersArray;
 }
 
 module.exports = router;
