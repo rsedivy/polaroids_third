@@ -156,7 +156,7 @@ router.get('/list/:campaignId/:tierID', (req, res) => {
     memberStore = []; // clear out the member store before each new request
     getMembersPage(memberEndpoint.toString())
         .then(() => {
-            const TESTING = true;
+            const TESTING = false;
 
             // memberStore should be populated with all the members now
 
@@ -308,7 +308,7 @@ function testDataGenerator() {
             "pledge_relationship_start": new Date("2022-04-29T07:05:01.573Z"),
             "tiers": [
                 "8581877"
-            ]
+            ],
         },
     ];
 
@@ -325,11 +325,19 @@ function testDataGenerator() {
         startDate.setDate(startDate.getDate() + dateOffset);
 
         membersArray.push({
-            "fullName": `test${i}`,
+            "fullName": `John Doe${i}`,
             "pledge_relationship_start": startDate,
             "tiers": [
                 "8581877"
-            ]
+            ],
+            "address": {
+                "country": "US",
+                "state": "CA",
+                "city": "San Francisco",
+                "postal_code": "94107",
+                "line_1": "123 Main St",
+                "line_2": "Suite 100"
+            }
         })
     }
 
