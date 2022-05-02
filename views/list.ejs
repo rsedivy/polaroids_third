@@ -15,7 +15,7 @@
         <%
         for (let i = 0; i < dates.length; i++) {
             let dateStyle;
-            switch(dates[i].relative){
+            switch (dates[i].relative) {
                 case 0:
                     dateStyle = 'today';
                     break;
@@ -27,35 +27,68 @@
                     break;
             }
         %>
-            <div class="date-list">
-                <div class="date-list-title <%=dateStyle%>">
-                    <%= dates[i].date.toDateString() %><%if(dates[i].relative === 0){%> - Today<%}%>
-                </div>
-                <div class="polaroid-members">
-                    <%
-                        if(dates[i].members.length > 0){
-                    for (let j = 0; j < dates[i].members.length; j++) {
-                    %>
-
-                        <div class="polaroid-member">
-                            <%= dates[i].members[j].fullName %> - <%= dates[i].members[j].pledge_relationship_start.toDateString() %>
-                        </div>
-
-                    <%
-                    }
-                    }else{
-                    %>
-                    <div class="polaroid-empty">
-                            No members need a polaroid today.
-                    </div>
-                    <%}%>
-                </div>
+        <div class="date-list">
+            <div class="date-list-title <%= dateStyle %>">
+                <%= dates[i].date.toDateString() %>
+                <% if(dates[i].relative === 0){ %> - Today
+                <% } %>
             </div>
+            <div class="polaroid-members">
+                <%
+                if(dates[i].members.length > 0){
+                for (let j = 0; j < dates[i].members.length; j++) {
+                %>
+
+                    <div class="polaroid-member">
+                        <div class="polaroid-member-name">
+                            <strong><%= dates[i].members[j].fullName %></strong>
+                        </div>
+                        <div class="polaroid-member-details">
+                            <div class="polaroid-member-address">
+                                <%
+                                if(dates[i].members[j].address){
+                                %>
+                                <%= dates[i].members[j].address.line_1 %><br/>
+                                <%= dates[i].members[j].address.line_2 %><br/>
+                                <%= dates[i].members[j].address.city %>
+                                , <%= dates[i].members[j].address.state %> <%= dates[i].members[j].address.postal_code %>
+                                <br/>
+                                <%= dates[i].members[j].address.country %>
+                                <%
+                                }else{
+                                %>
+                                <em>No mailing address supplied</em>
+                                <%
+                                }
+                                %>
+                            </div>
+                            <div class="polaroid-member-info">
+                                    <span>
+                                        Patreon member since: <em><%= dates[i].members[j].pledge_relationship_start.toDateString() %>
+                                            %>
+                                        </em>
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+
+                <%
+                }
+                }else{
+                %>
+                    <div class="polaroid-empty">
+                        No members need a polaroid today.
+                    </div>
+                <% } %>
+            </div>
+        </div>
         <%
         }
         %>
 
     </div>
 </div>
+
+<script src="/javascripts/main.js"></script>
 </body>
 </html>
