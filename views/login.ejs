@@ -4,10 +4,18 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
-<body>
-<h1>Login</h1>
-<p>
-    <a href="<%= url %>">Login with OAuth</a>
-</p>
+<body style="background-color: #c19c00">
+<img src="images/cat_polaroid.png" class="cat-polaroid">
+<div class="login">
+    <h1>Polaroids Third</h1>
+    <p>
+        <a href="<%= url %>" class="login-button">
+            Login with <img src="images/patreon_logo.png"  width="50px" style="margin: 0 10px">
+        </a>
+    </p>
+    <p style="max-width: 20vw; font-size: 10px">
+        <i>This project is not affiliated with Patreon™ or Polaroid™. All trademarks belong to their respective owners.</i>
+    </p>
+</div>
 </body>
 </html>

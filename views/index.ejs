@@ -5,27 +5,39 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+  <div class="title">
     <h1>Patreon Stuff</h1>
-    <h2>Select the patreon tier you'll be sending polaroids to.</h2>
-    <p>
-      <ul>
-      <%
-      for (let i = 0; i < campaigns.length; i++) {
-      %>
-      <li><strong>Creator Page <%=i+1%>: <%= campaigns[i].title %></strong></li>
-      <ul>
+  </div>
+  <div class="parent">
+    <div class="content">
+      <h2>Select the patreon tier you'll be sending polaroids to.</h2>
+
+
         <%
+        for (let i = 0; i < campaigns.length; i++) {
+        %>
+      <div class="creator-page">
+        <div class="creator-title">
+          <h2>Creator Page <%=i+1%>: <%= campaigns[i].title %></h2>
+        </div>
+        <div class="creator-tier-list">
+          <%
           for (var j = 0; j < campaigns[i].tiers.length; j++) {
-        %>
-        <li><a href="/list/<%=campaigns[i].id%>/<%=campaigns[i].tiers[j].id%>"><strong><%=campaigns[i].tiers[j].title%></strong> - <%=campaigns[i].tiers[j].amount / 100%> USD</a></li>
-        <%
+          %>
+          <div class="creator-tier">
+            <a href="/list/<%=campaigns[i].id%>/<%=campaigns[i].tiers[j].id%>"><strong><%=campaigns[i].tiers[j].title%></strong> - <%=campaigns[i].tiers[j].amount / 100%> USD</a>
+          </div>
+          <%
           }
+          %>
+        </div>
+      </div>
+        <%
+        }
         %>
-      </ul>
-      <%
-      }
-      %>
-    </ul>
-    </p>
+
+
+    </div>
+  </div>
   </body>
 </html>
