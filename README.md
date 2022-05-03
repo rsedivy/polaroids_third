@@ -45,12 +45,15 @@ Also, I take no liability if your house burns down as a result of my code. The [
 
 Install [node.js 18.0.0](https://nodejs.org/en/download/current/) or higher.  
 
+Make sure that your node and NPM locations are added to your PATH variable.
+
 *This version just came out, so you probably don't have it downloaded even if you have node.*
 
 ### Download this project from github
 
-Either as a .zip file top left or by doing  
-`git clone https://github.com/rsedivy/polaroids_third.git`
+Either as a .zip file from the top right or by doing  
+`git clone https://github.com/rsedivy/polaroids_third.git`  
+in your terminal of choice, if you have the git CLI installed.
 
 ### Install dependencies
 
@@ -90,9 +93,17 @@ Afterwards, just select the tier that you want to view (I don't know your Patreo
 
 ### On a serious note: a word about security
 
-If used as intended (localy hosted, only run when needed and not perpetually, not run on an open port), this project should be *relatively* safe to run, but it's certainly not secure.
+If used as intended, this project should be *relatively* safe to run, but it's certainly not secure.
 
-In other words, while there are no vulnerabilities that I know of, there are many safety risks as a result of the hasty code.
+In other words, while there are no vulnerabilities that I know of, there are many safety risks as a result of the hasty code. These risks can be mitigated by taking the following actions:
+
+* Not running the server perpetually
+* Running it locally only!
+  * By default this project runs on port 3000. If you need, you can change that by modifying the PORT environment variable.
+  * Make sure that the port you choose is not open.
+  * This project uses a completely asinine method of keeping your user session - there is a single global session, meaning that once you log in, anyone who connects to the server will be logged in under your account. This is also the fastest way of doing it, but as a result this project is only safe to run locally hosted.
+
+Finally, this project keeps your API keys on disk, which is Bad Practice™, however, if someone were to compromise your machine you'd probably have bigger issues on your plate than someone reading your Patreons personal data, so in my opinion in this specific case it's not much of an issue.
 
 If this project is actually used, I can definitely take some time to make modifications to it to make it more secure.
 
@@ -101,4 +112,4 @@ Parts of this code were written by AI (Github Copilot). All hail our robot overl
 
 ---
 
-*This project is not affiliated with Polaroid™, Polaroid Corporation, or Polaroid B.V. All trademarks are the property of their respective owners.*
+*This project is not affiliated with Polaroid™, Polaroid Corporation, Polaroid B.V., Patreon Inc., or the Safety Third Podcast. This is a fan project. All trademarks are the property of their respective owners.*
