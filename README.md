@@ -103,7 +103,7 @@ In other words, while there are no vulnerabilities that I know of, there are man
   * Make sure that the port you choose is not open.
   * This project uses a completely asinine method of keeping your user session - there is a single global session, meaning that once you log in, anyone who connects to the server will be logged in under your account. This is also the fastest way of doing it, but as a result this project is only safe to run locally hosted.
 
-Finally, this project keeps your API keys on disk, which is Bad Practice™, however, if someone were to compromise your machine you'd probably have bigger issues on your plate than someone reading your Patreons personal data, so in my opinion in this specific case it's not much of an issue.
+Finally, this project keeps your API keys on disk, which is Bad Practice™, however, if someone were to compromise your machine to the point where they can read them, you'd probably have bigger issues on your plate than someone misusing your client keys, so in my opinion in this specific case it's not much of an issue.
 
 If this project is actually used, I can definitely take some time to make modifications to it to make it more secure.
 
