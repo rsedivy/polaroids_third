@@ -1,30 +1,36 @@
 const express = require('express');
 const router = express.Router();
 
-const patreon = require('patreon');
-const patreonAPI = patreon.patreon;
-const patreonOAuth = patreon.oauth;
-
+// API keys taken from .env file
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const patreonOAuthClient = patreonOAuth(CLIENT_ID, CLIENT_SECRET);
 
+// OAuth2 Redirect - this will need to be changed if this project will be eventually hosted on a publicly accessible server
 const redirectURI = 'http://localhost:3000/patreon/callback';
 
+// User "session store"
+// ⚠ This is really bad practice ⚠
+// As a result this project should absolutely not be run on a server that is accessible over the open internet
+// i.e. always run on a closed port.
 let user = null;
 
+// Call API endpoints
 function apiCall(endpoint, query) {
+    // Combine selected endpoint with API URL
     const apiURL = new URL("https://www.patreon.com/api/oauth2/v2/" + endpoint);
+    // If there is a specific query, add it to the URL
     if (query != null) {
         const searchParams = new URLSearchParams(query);
         apiURL.search = searchParams.toString();
     }
 
-    console.log(apiURL.toString());
+    console.log(apiURL.toString()); // Logging for debugging purposes
+
+    // Using native ndoe fetch module - this is why node 18.0.0 is required
     return fetch(apiURL, {
         method: "GET",
         headers: {
-            "Authorization": `Bearer ${user.token}`
+            "Authorization": `Bearer ${user.token}` // This is the token we get from the initial OAuth2 login
         }
     }).then((res) => {
         if (res.ok) {
@@ -54,26 +60,44 @@ router.get('/patreon/callback', (req, res) => {
     const {code} = req.query;
     let token;
 
-    return patreonOAuthClient.getTokens(code, redirectURI)
-        .then((tokenResponse) => {
-            token = tokenResponse.access_token
-            apiClient = patreonAPI(token);
-            return apiClient('/current_user')
-        })
-        .then(({store, rawJson}) => {
-            const {id} = rawJson.data
-            user = {
-                id,
-                token
-            };
-            console.log(id);
-            return res.redirect(`/`)
-        })
-        .catch((err) => {
-            console.log(err)
-            console.log('Redirecting to login')
-            res.redirect('/login')
-        })
+
+    const tokenParams = new URLSearchParams(
+        {
+            grant_type: 'authorization_code',
+            code: code,
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            redirect_uri: redirectURI
+        }
+    );
+
+    const tokenURL = new URL("https://www.patreon.com/api/oauth2/token");
+    tokenURL.search = tokenParams.toString();
+
+    fetch(tokenURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+    }).then((res) => {
+        if (res.ok) {
+            return res.json();
+        } else {
+            return Promise.reject(new Error(res.statusText));
+        }
+    }).then((json) => {
+        token = json.access_token;
+        user = {
+            token: token
+        };
+        return apiCall("current_user");
+    }).then((json) => {
+        user.id = json.data.id;
+        res.redirect('/');
+    }).catch((err) => {
+        console.log(err);
+        res.redirect('/');
+    });
 });
 
 router.get('/login', (req, res) => {
